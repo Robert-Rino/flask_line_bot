@@ -1,4 +1,4 @@
-#!/Users/RobertRino/Repository/flask_line_bot/env_flask_linebot/bin/python
+#!/Users/RobertRino/Repository/flask_line_bot/env_flask_linebot/bin/python3.6
 
 # -*- coding: utf-8 -*-
 import re
