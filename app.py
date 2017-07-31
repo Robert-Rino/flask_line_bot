@@ -8,8 +8,11 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, StickerSendMessage,
+    LocationMessage, TemplateSendMessage, CarouselTemplate, CarouselColumn,
+    PostbackTemplateAction, MessageTemplateAction, URITemplateAction
 )
+from nomed import Nomed
 
 from config import config
 
@@ -34,15 +37,79 @@ def callback():
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
-    
-    return 200
 
+    return 'OK', 200
+
+@app.route('/pushtest', methods=['POST'])
+def push():
+    # U628c4639ff5b414f53f9270d4d499dd6
+    # U1417c3eb67e02734518492add042a40e
+    line_bot_api.push_message('U628c4639ff5b414f53f9270d4d499dd6',
+    StickerSendMessage(
+    package_id='1171546',
+    sticker_id='6982069'
+))
+    return '', 200
+
+@app.route('/testgeo', methods=['GET'])
+def dis():
+    log = request.args.get('log')
+    lat = request.args.get('lat')
+    print(Nomed.findByGeo(lat, log)[:5])
+    return '', 200
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    app.logger.info("in echo message handler, event = {} ".format(event.type))
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.message.text))
 
+@handler.add(MessageEvent, message=LocationMessage)
+def handle_message(event):
+    log = event.message.longitude
+    lat = event.message.latitude
+    app.logger.info("in location handler longitude = {}, latitude = {}".format(log, lat))
+    store_list = Nomed.findByGeo(lat, log)
+    print(store_list[0])
+    print(store_list[1])
+    # print(type(CarouselColumnBuilder(store_list)[0]))
+    line_bot_api.reply_message(
+        event.reply_token,TemplateSendMessage(
+            alt_text='Carousel template',
+            template=CarouselTemplate(
+            columns=[
+                store for store in CarouselColumnBuilder(store_list)[:3]
+            ]
+            )
+        )
+    )
+
+def CarouselColumnBuilder(stores):
+    result = [CarouselColumn(
+        title=store['name'],
+        text=store['address'],
+        actions=[
+            URITemplateAction(
+                label='official site',
+                uri=store['url']
+            ),
+            URITemplateAction(
+                label='Nomed commends',
+                uri="https://cafenomad.tw/shop/{}".format(store['id'])
+            ),
+            URITemplateAction(
+                label='google map',
+                uri="https://www.google.com.tw/maps/place/{}".format(store['address'])
+            )
+        ]
+    ) for store in stores[:4]]
+    return result
+
+@handler.default()
+def default(event):
+    app.logger.info("in default handler")
+    return '', 200
+
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run()
