@@ -1,0 +1,17 @@
+TODO LIST:
+---
+MODEL:
+1. create db save users commands
+
+CONTROLLER:
+1. refactor structor
+
+PRODUCTION:
+1. deploy to gcloud
+2. deploy to heroku
+
+STRUCTURE:
+1. blue print
+
+LINE-BOT:
+1. post back event send data to server
