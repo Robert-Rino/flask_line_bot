@@ -71,15 +71,15 @@ def handle_message(event):
     lat = event.message.latitude
     app.logger.info("in location handler longitude = {}, latitude = {}".format(log, lat))
     store_list = Nomed.findByGeo(lat, log)
-    print(store_list[0])
-    print(store_list[1])
-    # print(type(CarouselColumnBuilder(store_list)[0]))
+    for line in store_list[:5]:
+        print(line['url'])
+
     line_bot_api.reply_message(
         event.reply_token,TemplateSendMessage(
             alt_text='Carousel template',
             template=CarouselTemplate(
             columns=[
-                store for store in CarouselColumnBuilder(store_list)[:3]
+                store for store in CarouselColumnBuilder(store_list[:5])
             ]
             )
         )
@@ -92,7 +92,7 @@ def CarouselColumnBuilder(stores):
         actions=[
             URITemplateAction(
                 label='official site',
-                uri=store['url']
+                uri=store['url'] if store['url'] != '' else 'https://www.facebook.com'
             ),
             URITemplateAction(
                 label='Nomed commends',
@@ -103,7 +103,7 @@ def CarouselColumnBuilder(stores):
                 uri="https://www.google.com.tw/maps/place/{}".format(store['address'])
             )
         ]
-    ) for store in stores[:4]]
+    ) for store in stores]
     return result
 
 @handler.default()
