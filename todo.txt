@@ -15,3 +15,9 @@ STRUCTURE:
 
 LINE-BOT:
 1. post back event send data to server
+
+TEST:
+1. write test
+
+SERVER_SETTING:
+1. gunicorn and uwsgi commands
