@@ -1,3 +1,4 @@
 *.pyc
 config.py
 env_flask_linebot/
+app.yaml
