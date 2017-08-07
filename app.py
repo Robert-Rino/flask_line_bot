@@ -1,6 +1,7 @@
-import os
-from flask import Flask, request, abort
-
+import os, time, datetime
+from flask import (
+    Flask, request, abort, make_response, redirect, current_app, Response
+)
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -13,6 +14,7 @@ from linebot.models import (
     PostbackTemplateAction, MessageTemplateAction, URITemplateAction
 )
 from nomed import Nomed
+from products import products
 
 from config import config
 
@@ -30,15 +32,16 @@ def callback():
 
     # get request body as text
     body = request.get_data(as_text=True)
+    header = request.headers['X-Line-Signature']
     app.logger.info("Request body: " + body)
+    app.logger.info("Request header: "+ header)
 
     # handle webhook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
-
-    return 'OK', 200
+    return 'ok', 200
 
 @app.route('/pushtest', methods=['POST'])
 def push():
@@ -46,17 +49,65 @@ def push():
     # U1417c3eb67e02734518492add042a40e
     line_bot_api.push_message('U628c4639ff5b414f53f9270d4d499dd6',
     StickerSendMessage(
-    package_id='1171546',
-    sticker_id='6982069'
+    package_id='2',
+    sticker_id='140'
 ))
     return '', 200
 
-@app.route('/testgeo', methods=['GET'])
-def dis():
-    log = request.args.get('log')
-    lat = request.args.get('lat')
-    print(Nomed.findByGeo(lat, log)[:5])
-    return '', 200
+@app.route('/testcookie', methods=['GET'])
+def cookie():
+    cookie = request.cookies
+    res = make_response(('create cookie'), 200)
+    if 'tagtoo' not in cookie:
+        res.set_cookie('tagtoo', value='rinoupdate')
+    else :
+        app.logger.info("Request cookie: "+ str(cookie['tagtoo']))
+    return res
+
+@app.route('/postad', methods=['POST'])
+def advertisement():
+    data = request.json
+    userId = data['userId']
+    product_list = buildProductColumnsForUser(products, userId)
+
+    line_bot_api.push_message(
+        userId,TemplateSendMessage(
+            alt_text='您的專屬配件',
+            template=CarouselTemplate(
+            columns=[
+                product for product in product_list
+            ]
+            )
+        )
+    )
+    return 'ok', 200
+
+def buildProductColumnsForUser(products, userId):
+    result = [CarouselColumn(
+        thumbnail_image_url=product['picture_url'],
+        title=product['name'],
+        text="$ {}".format(product['price']),
+        actions=[
+            URITemplateAction(
+                label='前往賣場',
+                uri="https://www.google.com.tw?test={}".format(userId))
+        ]
+    ) for product in products]
+    return result
+
+@app.route('/redirectTest', methods=['GET'])
+def redirectTest():
+    # print(request.args.get('name'))
+    name = request.args.get('name')
+    redirectSite = redirect("https://www.obdesign.com.tw?name={}".format(name))
+    # response = current_app.make_response(redirectSite)
+    response = Response('add cookie')
+    response.set_cookie(
+    key='tagtoo',
+    value='rinotest',
+    expires=time.time()+6*60)
+    return response
+
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -79,13 +130,13 @@ def handle_message(event):
             alt_text='Carousel template',
             template=CarouselTemplate(
             columns=[
-                store for store in CarouselColumnBuilder(store_list[:5])
+                store for store in buildStoreCarouselColumns(store_list[:5])
             ]
             )
         )
     )
 
-def CarouselColumnBuilder(stores):
+def buildStoreCarouselColumns(stores):
     result = [CarouselColumn(
         title=store['name'],
         text=store['address'],
