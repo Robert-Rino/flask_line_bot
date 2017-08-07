@@ -7,8 +7,7 @@ CONTROLLER:
 1. refactor structor
 
 PRODUCTION:
-1. deploy to gcloud
-2. deploy to heroku
+1. deploy to heroku
 
 STRUCTURE:
 1. blue print
@@ -21,3 +20,4 @@ TEST:
 
 SERVER_SETTING:
 1. gunicorn and uwsgi commands
+2. session and cookie
