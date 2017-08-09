@@ -1,6 +1,6 @@
 import os, time, datetime
 from flask import (
-    Flask, request, abort, make_response, redirect, current_app, Response
+    Flask, request, abort, make_response, redirect, current_app, Response, render_template
 )
 from linebot import (
     LineBotApi, WebhookHandler
@@ -25,6 +25,10 @@ app.config.from_object(config[os.environ.get('FLASK_CONFIG')])
 line_bot_api = LineBotApi(app.config['CHANNEL_ACCESS_TOKEN'])
 handler = WebhookHandler(app.config['CHANNEL_SECRET'])
 
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('index.html')
+    
 @app.route("/callback", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
