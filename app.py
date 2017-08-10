@@ -27,8 +27,10 @@ handler = WebhookHandler(app.config['CHANNEL_SECRET'])
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
-    
+    line_id = 'U628c4639ff5b414f53f9270d4d499dd6'
+    cookie = 'rino'
+    return render_template('index.html', line_id=line_id, cookie=cookie)
+
 @app.route("/callback", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
@@ -58,16 +60,6 @@ def push():
 ))
     return '', 200
 
-@app.route('/testcookie', methods=['GET'])
-def cookie():
-    cookie = request.cookies
-    res = make_response(('create cookie'), 200)
-    if 'tagtoo' not in cookie:
-        res.set_cookie('tagtoo', value='rinoupdate')
-    else :
-        app.logger.info("Request cookie: "+ str(cookie['tagtoo']))
-    return res
-
 @app.route('/postad', methods=['POST'])
 def advertisement():
     data = request.json
@@ -87,6 +79,7 @@ def advertisement():
     return 'ok', 200
 
 def buildProductColumnsForUser(products, userId):
+    redirect_url = "https://b4ac6e37.ngrok.io/redirect?line_id={}".format(userId)
     result = [CarouselColumn(
         thumbnail_image_url=product['picture_url'],
         title=product['name'],
@@ -94,24 +87,10 @@ def buildProductColumnsForUser(products, userId):
         actions=[
             URITemplateAction(
                 label='前往賣場',
-                uri="https://www.google.com.tw?test={}".format(userId))
+                uri=redirect_url)
         ]
     ) for product in products]
     return result
-
-@app.route('/redirectTest', methods=['GET'])
-def redirectTest():
-    # print(request.args.get('name'))
-    name = request.args.get('name')
-    redirectSite = redirect("https://www.obdesign.com.tw?name={}".format(name))
-    # response = current_app.make_response(redirectSite)
-    response = Response('add cookie')
-    response.set_cookie(
-    key='tagtoo',
-    value='rinotest',
-    expires=time.time()+6*60)
-    return response
-
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
