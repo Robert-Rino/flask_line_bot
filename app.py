@@ -1,4 +1,4 @@
-import os, time, datetime
+import os, time, datetime, requests
 from flask import (
     Flask, request, abort, make_response, redirect, current_app, Response, render_template
 )
@@ -9,7 +9,8 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, StickerSendMessage,
+    MessageEvent, PostbackEvent,
+    TextMessage, TextSendMessage, StickerSendMessage,
     LocationMessage, TemplateSendMessage, CarouselTemplate, CarouselColumn,
     PostbackTemplateAction, MessageTemplateAction, URITemplateAction
 )
@@ -79,7 +80,7 @@ def advertisement():
     return 'ok', 200
 
 def buildProductColumnsForUser(products, userId):
-    redirect_url = "https://b4ac6e37.ngrok.io/redirect?line_id={}".format(userId)
+    # redirect_url = "https://b4ac6e37.ngrok.io/redirect?line_id={}&product_id={}".format(userId)
     result = [CarouselColumn(
         thumbnail_image_url=product['picture_url'],
         title=product['name'],
@@ -87,7 +88,7 @@ def buildProductColumnsForUser(products, userId):
         actions=[
             URITemplateAction(
                 label='前往賣場',
-                uri=redirect_url)
+                uri="https://b4ac6e37.ngrok.io/redirect?line_id={}&p_id={}".format(userId, product['p_id']))
         ]
     ) for product in products]
     return result
@@ -105,8 +106,8 @@ def handle_message(event):
     lat = event.message.latitude
     app.logger.info("in location handler longitude = {}, latitude = {}".format(log, lat))
     store_list = Nomed.findByGeo(lat, log)
-    for line in store_list[:5]:
-        print(line['url'])
+    # for line in store_list[:5]:
+    #     print(line['url'])
 
     line_bot_api.reply_message(
         event.reply_token,TemplateSendMessage(
@@ -139,6 +140,16 @@ def buildStoreCarouselColumns(stores):
         ]
     ) for store in stores]
     return result
+
+@handler.add(PostbackEvent)
+def handlePostback(event):
+    data = parsePostbackDataString(event.postback.data)
+    print(data)
+    return 'ok', 200
+
+def parsePostbackDataString(postbackDataStirng):
+    dataPairs = postbackDataStirng.split('&')
+    return { dataPair.split('=')[0]: dataPair.split('=')[1] for dataPair in dataPairs}
 
 @handler.default()
 def default(event):
