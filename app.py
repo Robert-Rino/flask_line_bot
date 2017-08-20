@@ -51,17 +51,6 @@ def callback():
         abort(400)
     return 'ok', 200
 
-@app.route('/pushtest', methods=['POST'])
-def push():
-    # U628c4639ff5b414f53f9270d4d499dd6
-    # U1417c3eb67e02734518492add042a40e
-    line_bot_api.push_message('U628c4639ff5b414f53f9270d4d499dd6',
-    StickerSendMessage(
-    package_id='2',
-    sticker_id='140'
-))
-    return '', 200
-
 @app.route('/postad', methods=['POST'])
 def advertisement():
     data = request.json
