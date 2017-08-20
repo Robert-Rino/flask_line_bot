@@ -1,6 +1,7 @@
 import os, time, datetime, requests
 from flask import (
-    Flask, request, abort, make_response, redirect, current_app, Response, render_template
+    Flask, request, abort, make_response, redirect, current_app, Response, render_template,
+    jsonify
 )
 from linebot import (
     LineBotApi, WebhookHandler
@@ -64,23 +65,27 @@ def push():
 @app.route('/postad', methods=['POST'])
 def advertisement():
     data = request.json
-    userId = data['userId']
-    product_list = buildProductColumnsForUser(products, userId)
+    userId = data['user_id']
+    products = data['products']
 
-    line_bot_api.push_message(
-        userId,TemplateSendMessage(
-            alt_text='您的專屬配件',
-            template=CarouselTemplate(
-            columns=[
-                product for product in product_list
-            ]
+    if len(products) == 0 :
+        return jsonify({'message': 'bad request'}), 400
+
+    else:
+        product_list = buildProductColumnsForUser(products, userId)[0:4]
+        line_bot_api.push_message(
+            userId,TemplateSendMessage(
+                alt_text='您的專屬配件',
+                template=CarouselTemplate(
+                columns=[
+                    product for product in product_list
+                ]
+                )
             )
         )
-    )
-    return 'ok', 200
+        return jsonify({'message' : 'ok'}), 200
 
 def buildProductColumnsForUser(products, userId):
-    # redirect_url = "https://b4ac6e37.ngrok.io/redirect?line_id={}&product_id={}".format(userId)
     result = [CarouselColumn(
         thumbnail_image_url=product['picture_url'],
         title=product['name'],
@@ -88,7 +93,7 @@ def buildProductColumnsForUser(products, userId):
         actions=[
             URITemplateAction(
                 label='前往賣場',
-                uri="https://b4ac6e37.ngrok.io/redirect?line_id={}&p_id={}".format(userId, product['p_id']))
+                uri=product['target_url'])
         ]
     ) for product in products]
     return result
