@@ -29,9 +29,10 @@ handler = WebhookHandler(app.config['CHANNEL_SECRET'])
 
 @app.route('/', methods=['GET'])
 def index():
-    line_id = 'U628c4639ff5b414f53f9270d4d499dd6'
-    cookie = 'rino'
-    return render_template('index.html', line_id=line_id, cookie=cookie)
+    return 'line-bot api server', 200
+    # line_id = 'U628c4639ff5b414f53f9270d4d499dd6'
+    # cookie = 'rino'
+    # return render_template('index.html', line_id=line_id, cookie=cookie)
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -42,7 +43,7 @@ def callback():
     body = request.get_data(as_text=True)
     header = request.headers['X-Line-Signature']
     app.logger.info("Request body: " + body)
-    app.logger.info("Request header: "+ header)
+    app.logger.info("Request signature header: "+ header)
 
     # handle webhook body
     try:
@@ -50,6 +51,7 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'ok', 200
+
 
 @app.route('/postad', methods=['POST'])
 def advertisement():
