@@ -58,7 +58,7 @@ def callback():
 def advertisement():
     data = request.json
     userId = data['user_id']
-    products = data['products']
+    # products = data['products']
 
     if len(products) == 0 :
         return jsonify({'message': 'bad request'}), 400
@@ -85,35 +85,35 @@ def buildProductColumnsForUser(products, userId):
         actions=[
             URITemplateAction(
                 label='前往賣場',
-                uri=product['target_url'])
+                uri=product['market_url'])
         ]
     ) for product in products]
     return result
 
-@app.route('/image_carouse', methods=['POST'])
-def image_carouse():
-    data = request.json
-    userId = data['user_id']
-    import products as product_example
-    # products = data['products']
-    products = product_example
-
-    if len(products) == 0 :
-        return jsonify({'message': 'bad request'}), 400
-
-    else:
-        product_list = buildImageColumnsForUser(products, userId)[0:4]
-        line_bot_api.push_message(
-            userId,TemplateSendMessage(
-                alt_text='您的專屬配件',
-                template=CarouselTemplate(
-                columns=[
-                    product for product in product_list
-                ]
-                )
-            )
-        )
-        return jsonify({'message' : 'ok'}), 200
+# @app.route('/image_carouse', methods=['POST'])
+# def image_carouse():
+#     data = request.json
+#     userId = data['user_id']
+#     import products as product_example
+#     # products = data['products']
+#     products = product_example
+#
+#     if len(products) == 0 :
+#         return jsonify({'message': 'bad request'}), 400
+#
+#     else:
+#         product_list = buildImageColumnsForUser(products, userId)[0:4]
+#         line_bot_api.push_message(
+#             userId,TemplateSendMessage(
+#                 alt_text='您的專屬配件',
+#                 template=CarouselTemplate(
+#                 columns=[
+#                     product for product in product_list
+#                 ]
+#                 )
+#             )
+#         )
+#         return jsonify({'message' : 'ok'}), 200
 
 def buildImageColumnsForUser(products, userId):
     result = [ImageCarouselColumn(
