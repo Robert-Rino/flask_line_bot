@@ -1,7 +1,38 @@
 {% extends "layout.html" %}
 {% block title %}Hello world!{% endblock %}
 {% block body %}
-    {{ super() }}
-    <h2>这个标题在子模板中定义</h2>
-    <img src='https://a3a99279.ngrok.io/setCookie?line_id={{ line_id }}&cookie={{ cookie }}' style="display:none;" />
+    <div class="container" width="200" style="padding:15px 20px">
+        <div class="row justify-content-center">
+            <div name="logo">
+                <img src="https://storage.googleapis.com/facebook_messenger_bot_bonnie/barcodes/i%E8%B4%88%E7%A6%AELogo.png" class="img-thumbnail" width="200" height="40">
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div name="info">
+                <p>活動名稱：Bonnie結婚</p>
+                <p>兌換期限：2018/03/12~2018/06/12</p> 
+                <p>兌換項目：CITICAFE中杯熱拿</p>
+                <p>單價：45元</p> 
+                <p>序號：{{ barcode_id }}</p>    
+            </div>
+        </div>
+        <div class="row justify-content-center">    
+            <div name="barcode">
+                    <img src="https://storage.googleapis.com/facebook_messenger_bot_bonnie/barcodes/barcode_example.png" class="img-thumbnail" >
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div name="notice">
+                <p>備註：</p>
+                <p>1. 若有手機條碼無法順利刷讀或感應不良，可於門市ibon列印紙本兌換券。選擇左上角代碼輸入、輸入i禮贈12碼兌換序號、確認後即可列印紙本小白單。</p>
+                <p>2. 電子券產出後請儘速於期限內兌換完畢，逾期或遺失恕不補發。</p>
+                <p>3. 本券限兌換乙個，兌換條碼一經刷讀完成兌換後，恕無法接受退貨或換貨。</p>
+                <p>4. 本券不得折抵現金，逾期視同作廢，恕不接受兌換，亦無法接受退還點數或資格。</p>
+                <p>5. 本券不得與其他促銷活動合併使用，也不計入統一超商舉辦之全店集點活動消費金額內。</p>
+                <p>6. 非使用統一超商發票之特殊門市無法兌換(如:台鐵或高鐵門市、百貨公司等)，本兌換券使用時需符合本券載明之品牌及規格，並以該門市實際販售之商品為主。</p>
+                <p>7. 贈品依各門市庫存數量為準，使用時須符合本券載明之品牌與規格，兌換前請先確認門市是否有足夠數量。</p>
+                <p>8. 活動主辦單位得以保留修改活動及更換贈品之權利，如對兌換資格或活動辦法有疑問請洽活動主辦廠商。</p>
+            </div>
+        </div>
+    </div>    
 {% endblock %}

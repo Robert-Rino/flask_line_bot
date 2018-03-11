@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# _*_ coding: utf-8 _*_
+
 import os, time, datetime, requests
 from flask import (
     Flask, request, abort, make_response, redirect, current_app, Response, render_template,
@@ -156,6 +159,15 @@ def bindLineuserTagtoouser():
         )
 
     return 'ok'
+
+@app.route('/barcode/')
+@app.route('/barcode/<barcode_id>')
+def barcode(barcode_id=None):
+    return render_template('index.html', barcode_id=barcode_id)
+
+@app.route('/template_example', methods=['GET'])
+def template_example():
+    return render_template('index.html',barcode_id='SHK1234567890')
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
