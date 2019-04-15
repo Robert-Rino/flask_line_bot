@@ -10,6 +10,6 @@ class Nomed:
         start = (latitude, longitude)
         near_store = sorted(stores, key= lambda x :cls.calculateDistance(start, (float(x['latitude']), float(x['longitude']))))
         return near_store
-
+    @classmethod
     def calculateDistance(_from, _to):
         return vincenty(_from, _to).miles
