@@ -17,7 +17,7 @@ from nomed import Nomed
 from config import config
 
 app = Flask(__name__)
-app.config.from_object(config[os.environ.get('FLASK_CONFIG')])
+app.config.from_object(config[os.environ.get('FLASK_CONFIG', 'dev')])
 # app.secret_key = os.environ.get('SECRET_KEY') or'rino'
 
 line_bot_api = LineBotApi(app.config['CHANNEL_ACCESS_TOKEN'])
@@ -41,7 +41,7 @@ def callback():
     return 'OK', 200
 
 @app.route('/pushtest', methods=['POST'])
-def push():
+def hello():
     # U628c4639ff5b414f53f9270d4d499dd6
     # U1417c3eb67e02734518492add042a40e
     line_bot_api.push_message('U628c4639ff5b414f53f9270d4d499dd6',
@@ -50,6 +50,10 @@ def push():
     sticker_id='6982069'
 ))
     return '', 200
+
+@app.route('/', methods=['GET'])
+def push():
+    return 'hello', 200
 
 @app.route('/testgeo', methods=['GET'])
 def dis():
