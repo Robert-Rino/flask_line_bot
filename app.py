@@ -41,7 +41,7 @@ def callback():
     return 'OK', 200
 
 @app.route('/pushtest', methods=['POST'])
-def hello():
+def push():
     # U628c4639ff5b414f53f9270d4d499dd6
     # U1417c3eb67e02734518492add042a40e
     line_bot_api.push_message('U628c4639ff5b414f53f9270d4d499dd6',
@@ -51,9 +51,6 @@ def hello():
 ))
     return '', 200
 
-@app.route('/', methods=['GET'])
-def push():
-    return 'hello', 200
 
 @app.route('/testgeo', methods=['GET'])
 def dis():
