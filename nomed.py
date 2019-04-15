@@ -6,7 +6,7 @@ stores = r.json()
 
 class Nomed(object):
     @staticmethod
-    def findByGeo(cls, latitude, longitude):
+    def findByGeo(latitude, longitude):
         start = (latitude, longitude)
         near_store = sorted(stores, key= lambda x :cls.calculateDistance(start, (float(x['latitude']), float(x['longitude']))))
         return near_store
