@@ -11,7 +11,7 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, StickerSendMessage,
     LocationMessage, TemplateSendMessage, CarouselTemplate, CarouselColumn,
-    PostbackTemplateAction, MessageTemplateAction, URITemplateAction
+    PostbackTemplateAction, MessageTemplateAction, URIAction
 )
 from nomed import Nomed
 
@@ -92,18 +92,18 @@ def CarouselColumnBuilder(stores):
         title=store['name'].encode('utf-8'),
         text=store['address'].encode('utf-8'),
         actions=[
-            URITemplateAction(
-                label='official site',
-                uri=store['url'] if store['url'] != '' else 'https://www.facebook.com'
-            ),
-            URITemplateAction(
-                label='Nomed commends',
-                uri="https://cafenomad.tw/shop/{}".format(store['id'])
-            ),
-            URITemplateAction(
-                label='google map',
-                uri="https://www.google.com.tw/maps/place/{}".format(store['address'].encode('utf-8'))
-            )
+            URIAction(
+                        label='official site',
+                        uri=store['url'] if store['url'] != '' else 'https://www.facebook.com'
+                    ),
+            URIAction(
+                        label='Nomed commends',
+                        uri="https://cafenomad.tw/shop/{}".format(store['id'])
+                    ),
+            URIAction(
+                        label='google map',
+                        uri="https://www.google.com.tw/maps/place/{}".format(store['address'].encode('utf-8'))
+                    )
         ]
     ) for store in stores]
     return result
