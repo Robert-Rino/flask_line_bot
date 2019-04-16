@@ -89,8 +89,8 @@ def handle_message(event):
 
 def CarouselColumnBuilder(stores):
     result = [CarouselColumn(
-        title=store['name'],
-        text=store['address'],
+        title=store['name'].encode('utf-8'),
+        text=store['address'].encode('utf-8'),
         actions=[
             URITemplateAction(
                 label='official site',
@@ -102,7 +102,7 @@ def CarouselColumnBuilder(stores):
             ),
             URITemplateAction(
                 label='google map',
-                uri="https://www.google.com.tw/maps/place/{}".format(store['address'])
+                uri="https://www.google.com.tw/maps/place/{}".format(store['address'].encode('utf-8'))
             )
         ]
     ) for store in stores]
