@@ -102,7 +102,7 @@ def CarouselColumnBuilder(stores):
                     ),
             URIAction(
                         label='google map',
-                        uri="https://www.google.com.tw/maps/place/{}".format(store['address'].encode('utf-8'))
+                        uri="https://www.google.com.tw/maps/place/{}".format(store['address'])
                     )
         ]
     ) for store in stores]
