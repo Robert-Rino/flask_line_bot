@@ -102,7 +102,7 @@ def CarouselColumnBuilder(stores):
                     ),
             URIAction(
                         label='google map',
-                        uri="https://maps.google.com/?q={},{}".format(stores['latitude'], stores['longitude'])
+                        uri="https://maps.google.com/?q={},{}".format(store['latitude'], store['longitude'])
                     )
         ]
     ) for store in stores]
