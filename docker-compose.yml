@@ -1,0 +1,25 @@
+version: '3.7'
+
+networks:
+  default:
+    driver: bridge
+
+services:
+  frontend:
+    image: openresty/openresty:alpine
+    volumes:
+    - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+    ports:
+    - "8000:80"
+    depends_on:
+    - web
+    networks:
+    - default
+  web:
+    command: python -m flask run -h 0.0.0.0 -p 8000 --debugger --reload
+    build: .
+    volumes:
+    - .:/usr/src/app/
+    networks:
+    - default
+    tty: true

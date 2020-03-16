@@ -24,6 +24,12 @@ app.config.from_object(config[os.environ.get('FLASK_CONFIG', 'dev')])
 line_bot_api = LineBotApi(app.config['CHANNEL_ACCESS_TOKEN'])
 handler = WebhookHandler(app.config['CHANNEL_SECRET'])
 
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    print 'request.host: {host}'.format(host=request.host)
+    return 'ok'
+
+
 @app.route("/callback", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
